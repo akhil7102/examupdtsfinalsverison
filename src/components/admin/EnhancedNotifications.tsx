@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, Eye, Filter, X, Calendar, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Filter, X, Calendar, Search, TrendingUp } from 'lucide-react';
 import { AdminLayout } from './AdminLayout';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -135,6 +135,42 @@ export function EnhancedNotifications() {
       toast.error('Failed to delete posts');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const toggleTrending = async (id: string, currentTrending: boolean) => {
+    try {
+      if (!currentTrending) {
+        // If marking as trending, first unmark all other trending posts
+        const currentTrendingPosts = posts.filter(p => p.trending && p.id !== id);
+        if (currentTrendingPosts.length > 0) {
+          // Unmark all currently trending posts
+          await Promise.all(
+            currentTrendingPosts.map(p => adminPostsApi.update(p.id, { trending: false }))
+          );
+        }
+        
+        // Mark the new post as trending
+        await adminPostsApi.update(id, { trending: true });
+        
+        // Update local state - unmark all others and mark this one
+        setPosts(posts.map((p) => ({
+          ...p,
+          trending: p.id === id
+        })));
+        
+        toast.success('Post marked as trending. Previous trending post has been replaced.');
+      } else {
+        // Just unmark this post
+        await adminPostsApi.update(id, { trending: false });
+        setPosts(posts.map((p) => 
+          p.id === id ? { ...p, trending: false } : p
+        ));
+        toast.success('Post removed from trending');
+      }
+    } catch (error) {
+      console.error('Failed to update trending status:', error);
+      toast.error('Failed to update trending status');
     }
   };
 
@@ -320,6 +356,7 @@ export function EnhancedNotifications() {
                   <th className="px-4 py-3 text-left text-xs text-[#0A0A0A]/60 uppercase">Title</th>
                   <th className="px-4 py-3 text-left text-xs text-[#0A0A0A]/60 uppercase">Category</th>
                   <th className="px-4 py-3 text-left text-xs text-[#0A0A0A]/60 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs text-[#0A0A0A]/60 uppercase">Trending</th>
                   <th className="px-4 py-3 text-left text-xs text-[#0A0A0A]/60 uppercase">Views</th>
                   <th className="px-4 py-3 text-left text-xs text-[#0A0A0A]/60 uppercase">Date</th>
                   <th className="px-4 py-3 text-left text-xs text-[#0A0A0A]/60 uppercase">Actions</th>
@@ -349,6 +386,16 @@ export function EnhancedNotifications() {
                       </td>
                       <td className="px-4 py-3">
                         <StatusBadge status={post.status} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleTrending(post.id, post.trending || false)}
+                          className={post.trending ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-600'}
+                        >
+                          <TrendingUp className="w-4 h-4" />
+                        </Button>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1 text-sm text-[#0A0A0A]/60">
@@ -409,6 +456,12 @@ export function EnhancedNotifications() {
                           {post.category}
                         </Badge>
                         <StatusBadge status={post.status} />
+                        {post.trending && (
+                          <Badge variant="secondary" className="bg-red-500/10 text-red-500 text-xs">
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                            Trending
+                          </Badge>
+                        )}
                       </div>
                       <div className="flex items-center gap-4 text-xs text-[#0A0A0A]/60 mb-3">
                         <div className="flex items-center gap-1">
@@ -421,6 +474,15 @@ export function EnhancedNotifications() {
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => toggleTrending(post.id, post.trending || false)}
+                      className={`flex-1 ${post.trending ? 'text-red-500 border-red-500 hover:bg-red-50' : ''}`}
+                    >
+                      <TrendingUp className="w-4 h-4 mr-2" />
+                      {post.trending ? 'Trending' : 'Mark'}
+                    </Button>
                     <Button asChild variant="outline" size="sm" className="flex-1">
                       <Link to={`/admin/notifications/edit/${post.id}`}>
                         <Edit className="w-4 h-4 mr-2" />

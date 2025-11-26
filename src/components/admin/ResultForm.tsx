@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '../ui/select';
 import { adminResultsApi, ExamResult } from '../../utils/adminApi';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 export function ResultForm() {
   const { id } = useParams();

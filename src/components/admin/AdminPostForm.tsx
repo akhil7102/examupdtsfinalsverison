@@ -16,7 +16,7 @@ import {
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 import { adminPostsApi, AdminPost } from '../../utils/adminApi';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 const categories = ['Exam Update'];
 
@@ -94,12 +94,35 @@ export function AdminPostForm() {
         exam_dates: validExamDates.length > 0 ? validExamDates : [],
       };
 
+      // If marking as trending, unmark all other trending posts first
+      if (postData.trending) {
+        try {
+          const allPosts = await adminPostsApi.getAll();
+          const currentTrendingPosts = allPosts.filter(p => p.trending && p.id !== id);
+          
+          if (currentTrendingPosts.length > 0) {
+            await Promise.all(
+              currentTrendingPosts.map(p => adminPostsApi.update(p.id, { trending: false }))
+            );
+          }
+        } catch (error) {
+          console.warn('Could not update other trending posts:', error);
+          // Continue anyway - the column might not exist yet
+        }
+      }
+
       if (isEditMode && id) {
         await adminPostsApi.update(id, postData);
-        toast.success('Post updated successfully');
+        toast.success(postData.trending 
+          ? 'Post updated and marked as trending. Previous trending post has been replaced.' 
+          : 'Post updated successfully'
+        );
       } else {
         await adminPostsApi.create(postData);
-        toast.success('Post created successfully');
+        toast.success(postData.trending 
+          ? 'Post created and marked as trending. Previous trending post has been replaced.' 
+          : 'Post created successfully'
+        );
       }
 
       navigate('/admin/notifications');
@@ -316,6 +339,26 @@ export function AdminPostForm() {
                   If provided, users will see "Download Time Table" button
                 </p>
               </div>
+            </div>
+
+            {/* Trending Checkbox */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="trending"
+                  checked={formData.trending || false}
+                  onChange={(e) => setFormData({ ...formData, trending: e.target.checked })}
+                  className="w-4 h-4 text-[#004AAD] rounded border-gray-300 focus:ring-[#004AAD]"
+                />
+                <Label htmlFor="trending" className="text-base flex items-center gap-2 cursor-pointer">
+                  <span className="text-red-500">🔥</span>
+                  Mark as Trending
+                </Label>
+              </div>
+              <p className="text-xs text-[#0A0A0A]/60 ml-7 mt-1">
+                Trending posts will appear in the "Trending Now" section on the user panel
+              </p>
             </div>
           </Card>
 

@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { adminResultsApi, ExamResult } from '../../utils/adminApi';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 export function AdminResults() {
   const [results, setResults] = useState<ExamResult[]>([]);

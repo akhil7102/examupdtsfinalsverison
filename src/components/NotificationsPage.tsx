@@ -230,28 +230,28 @@ export function NotificationsPage() {
                 <AdSenseSlot format="vertical" />
               </div>
 
-              {/* Trending Updates */}
+              {/* Trending Update */}
               {trendingUpdates.length > 0 && (
-                <Card className="p-6 bg-white">
+                <Card className="p-6 bg-white border-2 border-red-500/20">
                   <h3 className="text-[#0A0A0A] mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-[#004AAD]" />
-                    Trending Now
+                    <TrendingUp className="w-5 h-5 text-red-500" />
+                    <span className="text-red-500">Trending Now</span>
                   </h3>
-                  <div className="space-y-3">
-                    {trendingUpdates.slice(0, 5).map((update) => (
-                      <Link
-                        key={update.id}
-                        to={`/post/${update.id}`}
-                        className="block p-3 rounded-lg hover:bg-[#F5F5F5] transition-colors"
-                      >
-                        <p className="text-sm text-[#0A0A0A] mb-1 line-clamp-2">{update.title}</p>
-                        <div className="flex items-center gap-2 text-xs text-[#0A0A0A]/60">
-                          <Clock className="w-3 h-3" />
-                          {formatTimeAgo(update.date)}
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
+                  <Link
+                    to={`/post/${trendingUpdates[0].id}`}
+                    className="block p-4 rounded-lg bg-gradient-to-br from-red-50 to-orange-50 hover:from-red-100 hover:to-orange-100 transition-all"
+                  >
+                    <div className="flex items-start gap-2 mb-2">
+                      <Badge className="bg-red-500 text-white text-xs">
+                        {trendingUpdates[0].category}
+                      </Badge>
+                    </div>
+                    <p className="text-sm font-semibold text-[#0A0A0A] mb-2 line-clamp-3">{trendingUpdates[0].title}</p>
+                    <div className="flex items-center gap-2 text-xs text-[#0A0A0A]/60">
+                      <Clock className="w-3 h-3" />
+                      {formatTimeAgo(trendingUpdates[0].date)}
+                    </div>
+                  </Link>
                 </Card>
               )}
             </div>

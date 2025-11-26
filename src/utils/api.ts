@@ -34,6 +34,7 @@ export interface Result {
   pdf_file?: string;
   pdfLink: string; // Mapped from link
   views: number;
+  trending?: boolean;
 }
 
 export interface Note {

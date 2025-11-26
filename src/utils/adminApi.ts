@@ -43,6 +43,7 @@ export interface ExamResult {
   status: 'Released' | 'Pending' | 'Updated';
   date: string;
   views: number;
+  trending?: boolean;
 }
 
 export interface Note {

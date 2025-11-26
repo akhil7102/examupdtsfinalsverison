@@ -108,55 +108,68 @@ export function ResultsPage() {
 
       {/* Results List */}
       <section className="container mx-auto px-4 py-8">
-        {filteredResults.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredResults.map((result) => (
-              <div
-                key={result.id}
-                onClick={() => handleOpenModal(result)}
-                className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow flex flex-col cursor-pointer"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <Badge variant="secondary" className="bg-green-500/10 text-green-600">
-                    {result.status}
-                  </Badge>
-                  <Badge variant="secondary" className="bg-[#004AAD]/10 text-[#004AAD]">
-                    {result.exam}
-                  </Badge>
-                </div>
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Results */}
+          <div className="lg:col-span-2">
+            {filteredResults.length > 0 ? (
+              <div className="grid md:grid-cols-2 gap-6">
+                {filteredResults.map((result) => (
+                  <div
+                    key={result.id}
+                    onClick={() => handleOpenModal(result)}
+                    className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow flex flex-col cursor-pointer"
+                  >
+                    <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
+                      <Badge variant="secondary" className="bg-green-500/10 text-green-600">
+                        {result.status}
+                      </Badge>
+                      <Badge variant="secondary" className="bg-[#004AAD]/10 text-[#004AAD]">
+                        {result.exam}
+                      </Badge>
+                    </div>
 
-                <h3 className="text-[#0A0A0A] mb-3">{result.title}</h3>
-                
-                {/* Description */}
-                {result.description && (
-                  <p className="text-[#0A0A0A]/70 text-sm mb-3 line-clamp-3 flex-1">
-                    {result.description}
-                  </p>
-                )}
-                
-                <p className="text-[#0A0A0A]/60 text-sm mb-4">
-                  Published on {new Date(result.date).toLocaleDateString('en-US', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                  })}
-                </p>
+                    <h3 className="text-[#0A0A0A] mb-3">{result.title}</h3>
+                    
+                    {/* Description */}
+                    {result.description && (
+                      <p className="text-[#0A0A0A]/70 text-sm mb-3 line-clamp-3 flex-1">
+                        {result.description}
+                      </p>
+                    )}
+                    
+                    <p className="text-[#0A0A0A]/60 text-sm mb-4">
+                      Published on {new Date(result.date).toLocaleDateString('en-US', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      })}
+                    </p>
 
-                {/* Quick Actions */}
-                <div className="space-y-2 mt-auto">
-                  <div className="text-[#004AAD] text-sm flex items-center gap-1">
-                    <Download className="w-4 h-4" />
-                    <span>Click to view details and download</span>
+                    {/* Quick Actions */}
+                    <div className="space-y-2 mt-auto">
+                      <div className="text-[#004AAD] text-sm flex items-center gap-1">
+                        <Download className="w-4 h-4" />
+                        <span>Click to view details and download</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+                <p className="text-[#0A0A0A]/60">No results found matching your search.</p>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-            <p className="text-[#0A0A0A]/60">No results found matching your search.</p>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* AdSense Sidebar */}
+            <div className="sticky top-20">
+              <AdSenseSlot format="vertical" />
+            </div>
           </div>
-        )}
+        </div>
       </section>
 
       {/* Bottom AdSense */}
