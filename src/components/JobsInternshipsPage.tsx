@@ -121,7 +121,7 @@ export function JobsInternshipsPage() {
               sortedJobs.map((job) => (
                 <div
                   key={job.id}
-                  className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow min-h-[240px]"
+                  className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
@@ -191,7 +191,7 @@ export function JobsInternshipsPage() {
               sortedInternships.map((internship) => (
                 <div
                   key={internship.id}
-                  className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow min-h-[240px]"
+                  className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">

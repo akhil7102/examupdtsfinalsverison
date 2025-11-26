@@ -44,13 +44,13 @@ export function TruncatedContent({
         
         {needsTruncation && (
           <>
-            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-            <div className="mt-3">
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-white pointer-events-none" />
+            <div className="mt-2 relative z-10">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsModalOpen(true)}
-                className="text-[#004AAD] border-[#004AAD] hover:bg-[#004AAD] hover:text-white transition-all"
+                className="text-[#004AAD] border-2 border-[#004AAD] hover:bg-[#004AAD] hover:text-white transition-all font-semibold shadow-sm"
               >
                 View More
               </Button>
