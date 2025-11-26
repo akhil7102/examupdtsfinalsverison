@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import { AdminJobs } from './components/admin/AdminJobs';
 import { JobForm } from './components/admin/JobForm';
 import { AdminInternships } from './components/admin/AdminInternships';
