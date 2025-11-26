@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, Eye, Filter, X, Calendar, Search } from 'lucide-react';
 import { AdminLayout } from './AdminLayout';
-import { DataTable } from './DataTable';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
@@ -21,7 +20,7 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { adminPostsApi, AdminPost } from '../../utils/adminApi';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 export function EnhancedNotifications() {
   const navigate = useNavigate();

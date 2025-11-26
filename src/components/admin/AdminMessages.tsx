@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Mail, Trash2, Check } from 'lucide-react';
 import { AdminLayout } from './AdminLayout';
-import { DataTable } from './DataTable';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import {
@@ -22,7 +21,7 @@ import {
   DialogTitle,
 } from '../ui/dialog';
 import { adminMessagesApi, ContactMessage } from '../../utils/adminApi';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 export function AdminMessages() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
@@ -96,101 +95,6 @@ export function AdminMessages() {
     });
   };
 
-  const columns = [
-    {
-      key: 'name',
-      label: 'Name',
-      sortable: true,
-    },
-    {
-      key: 'email',
-      label: 'Email',
-      sortable: true,
-      render: (message: ContactMessage) => (
-        <a
-          href={`mailto:${message.email}`}
-          className="text-[#004AAD] hover:underline"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {message.email}
-        </a>
-      ),
-    },
-    {
-      key: 'message',
-      label: 'Message',
-      render: (message: ContactMessage) => (
-        <div className="max-w-md">
-          <p className="truncate">{message.message}</p>
-        </div>
-      ),
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      sortable: true,
-      render: (message: ContactMessage) => (
-        <Badge
-          variant="secondary"
-          className={
-            message.status === 'unread'
-              ? 'bg-orange-500/10 text-orange-600'
-              : 'bg-green-500/10 text-green-600'
-          }
-        >
-          {message.status}
-        </Badge>
-      ),
-    },
-    {
-      key: 'date',
-      label: 'Date',
-      sortable: true,
-      render: (message: ContactMessage) => <span>{formatDate(message.date)}</span>,
-    },
-    {
-      key: 'actions',
-      label: 'Actions',
-      render: (message: ContactMessage) => (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleViewMessage(message);
-            }}
-          >
-            <Mail className="w-4 h-4" />
-          </Button>
-          {message.status === 'unread' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleMarkAsRead(message.id);
-              }}
-            >
-              <Check className="w-4 h-4" />
-            </Button>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteId(message.id);
-            }}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        </div>
-      ),
-    },
-  ];
-
   const unreadCount = messages.filter((m) => m.status === 'unread').length;
 
   return (
@@ -206,81 +110,164 @@ export function AdminMessages() {
           </div>
         </div>
 
-        {/* Data Table */}
-        <DataTable
-          data={messages}
-          columns={columns}
-          searchPlaceholder="Search messages..."
-          isLoading={isLoading}
-          emptyMessage="No messages yet."
-          mobileCardRender={(message) => (
-            <div className="space-y-3">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-[#0A0A0A] mb-1">{message.name}</h3>
-                  <a
-                    href={`mailto:${message.email}`}
-                    className="text-sm text-[#004AAD] hover:underline truncate block"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {message.email}
-                  </a>
-                </div>
-                <Badge
-                  variant="secondary"
-                  className={`flex-shrink-0 ${
-                    message.status === 'unread'
-                      ? 'bg-orange-500/10 text-orange-600'
-                      : 'bg-green-500/10 text-green-600'
-                  }`}
-                >
-                  {message.status}
-                </Badge>
-              </div>
-              <p className="text-sm text-[#0A0A0A]/80 line-clamp-2">{message.message}</p>
-              <p className="text-xs text-[#0A0A0A]/60">{formatDate(message.date)}</p>
-              <div className="pt-3 border-t border-gray-200 flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleViewMessage(message);
-                  }}
-                  className="flex-1"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  View
-                </Button>
-                {message.status === 'unread' && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleMarkAsRead(message.id);
-                    }}
-                    className="flex-1"
-                  >
-                    <Check className="w-4 h-4 mr-2" />
-                    Mark Read
-                  </Button>
+        {/* Messages List */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          {/* Desktop View */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-[#F5F5F5] border-b border-gray-200">
+                <tr>
+                  <th className="px-4 py-3 text-left text-[#0A0A0A]/60 uppercase">Name</th>
+                  <th className="px-4 py-3 text-left text-[#0A0A0A]/60 uppercase">Email</th>
+                  <th className="px-4 py-3 text-left text-[#0A0A0A]/60 uppercase">Message</th>
+                  <th className="px-4 py-3 text-left text-[#0A0A0A]/60 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-[#0A0A0A]/60 uppercase">Date</th>
+                  <th className="px-4 py-3 text-left text-[#0A0A0A]/60 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {messages.length > 0 ? (
+                  messages.map((message) => (
+                    <tr key={message.id} className="hover:bg-[#F5F5F5] transition-colors">
+                      <td className="px-4 py-3">{message.name}</td>
+                      <td className="px-4 py-3">
+                        <a
+                          href={`mailto:${message.email}`}
+                          className="text-[#004AAD] hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {message.email}
+                        </a>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="max-w-md">
+                          <p className="truncate">{message.message}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Badge
+                          variant="secondary"
+                          className={
+                            message.status === 'unread'
+                              ? 'bg-orange-500/10 text-orange-600'
+                              : 'bg-green-500/10 text-green-600'
+                          }
+                        >
+                          {message.status}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-[#0A0A0A]/60">{formatDate(message.date)}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewMessage(message)}
+                          >
+                            <Mail className="w-4 h-4" />
+                          </Button>
+                          {message.status === 'unread' && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleMarkAsRead(message.id)}
+                            >
+                              <Check className="w-4 h-4" />
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDeleteId(message.id)}
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-[#0A0A0A]/60">
+                      No messages yet.
+                    </td>
+                  </tr>
                 )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setDeleteId(message.id);
-                  }}
-                  className="flex-shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile View */}
+          <div className="md:hidden divide-y divide-gray-200">
+            {messages.length > 0 ? (
+              messages.map((message) => (
+                <div key={message.id} className="p-4">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-[#0A0A0A] mb-1">{message.name}</h3>
+                        <a
+                          href={`mailto:${message.email}`}
+                          className="text-sm text-[#004AAD] hover:underline truncate block"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {message.email}
+                        </a>
+                      </div>
+                      <Badge
+                        variant="secondary"
+                        className={`flex-shrink-0 ${
+                          message.status === 'unread'
+                            ? 'bg-orange-500/10 text-orange-600'
+                            : 'bg-green-500/10 text-green-600'
+                        }`}
+                      >
+                        {message.status}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-[#0A0A0A]/80 line-clamp-2">{message.message}</p>
+                    <p className="text-xs text-[#0A0A0A]/60">{formatDate(message.date)}</p>
+                    <div className="pt-3 border-t border-gray-200 flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewMessage(message)}
+                        className="flex-1"
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        View
+                      </Button>
+                      {message.status === 'unread' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleMarkAsRead(message.id)}
+                          className="flex-1"
+                        >
+                          <Check className="w-4 h-4 mr-2" />
+                          Mark Read
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDeleteId(message.id)}
+                        className="flex-shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-8 text-center text-[#0A0A0A]/60">
+                No messages yet.
               </div>
-            </div>
-          )}
-        />
+            )}
+          </div>
+        </div>
       </div>
 
       {/* View Message Dialog */}
