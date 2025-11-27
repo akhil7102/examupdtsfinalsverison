@@ -4,7 +4,7 @@ import { LogIn, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { auth } from '../../utils/auth';
 import logo from 'figma:asset/1cd64d29c347abbc26d8fefe3e909a4610fd103b.png';
 
@@ -27,7 +27,7 @@ export function AdminLogin() {
         toast.success('Welcome back!', {
           description: 'Successfully logged in to admin panel.',
         });
-        navigate('/admin');
+        navigate('/admin/notifications');
       }
     } catch (error: any) {
       console.error('Login error:', error);
