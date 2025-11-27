@@ -27,7 +27,7 @@ export function AdminLogin() {
         toast.success('Welcome back!', {
           description: 'Successfully logged in to admin panel.',
         });
-        navigate('/admin/notifications');
+        navigate('/admin/dashboard', { replace: true });
       }
     } catch (error: any) {
       console.error('Login error:', error);

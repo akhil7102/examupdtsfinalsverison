@@ -33,10 +33,11 @@ export default function App() {
       <div className="min-h-screen bg-[#F5F5F5] flex flex-col">
         <Routes>
           {/* Admin login route */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/login" element={<Navigate to="/admin" replace />} />
           
           {/* Admin routes - no header/footer, managed by AdminLayout */}
-          <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
+          <Route path="/admin/dashboard" element={<EnhancedDashboard />} />
           <Route path="/admin/notifications" element={<EnhancedNotifications />} />
           <Route path="/admin/notifications/create" element={<AdminPostForm />} />
           <Route path="/admin/notifications/edit/:id" element={<AdminPostForm />} />

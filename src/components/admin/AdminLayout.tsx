@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { auth } from '../../utils/auth';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import logo from 'figma:asset/1cd64d29c347abbc26d8fefe3e909a4610fd103b.png';
 
 interface AdminLayoutProps {
@@ -25,7 +25,7 @@ interface AdminLayoutProps {
 }
 
 const navItems = [
-  { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/admin/notifications', label: 'Notifications', icon: Bell },
   { path: '/admin/results', label: 'Results', icon: Award },
   { path: '/admin/notes', label: 'Notes', icon: BookOpen },
@@ -55,13 +55,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     try {
       const currentUser = await auth.getSession();
       if (!currentUser) {
-        navigate('/admin/login');
+        navigate('/admin', { replace: true });
         return;
       }
       setUser(currentUser);
     } catch (error) {
       console.error('Auth check failed:', error);
-      navigate('/admin/login');
+      navigate('/admin', { replace: true });
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +71,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     try {
       await auth.signOut();
       toast.success('Logged out successfully');
-      navigate('/admin/login');
+      navigate('/', { replace: true });
     } catch (error) {
       console.error('Logout error:', error);
       toast.error('Failed to logout');
