@@ -36,7 +36,7 @@ export default function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           
           {/* Admin routes - no header/footer, managed by AdminLayout */}
-          <Route path="/admin" element={<EnhancedDashboard />} />
+          <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
           <Route path="/admin/notifications" element={<EnhancedNotifications />} />
           <Route path="/admin/notifications/create" element={<AdminPostForm />} />
           <Route path="/admin/notifications/edit/:id" element={<AdminPostForm />} />

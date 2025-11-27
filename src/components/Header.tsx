@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Bell, Home, FileText, Award, Briefcase, Video, BookOpen, HelpCircle, Shield, Instagram, Twitter } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, X, Bell, Home, FileText, Award, Briefcase, Video, BookOpen, HelpCircle, Instagram, Twitter, Users } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import logo from 'figma:asset/1cd64d29c347abbc26d8fefe3e909a4610fd103b.png';
 
@@ -40,7 +40,20 @@ const socialLinks = [
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isFollowModalOpen, setIsFollowModalOpen] = useState(false);
   const location = useLocation();
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isFollowModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isFollowModalOpen]);
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
@@ -83,36 +96,15 @@ export function Header() {
             })}
           </nav>
 
-          {/* Social Media Icons + Admin */}
-          <div className="hidden lg:flex items-center gap-3">
-            {/* Social Media Links */}
-            <div className="flex items-center gap-2 px-3 border-r border-gray-200">
-              {socialLinks.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.name}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`p-2 rounded-full text-[#0A0A0A]/60 transition-colors ${social.color}`}
-                    aria-label={social.name}
-                    title={social.name}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </a>
-                );
-              })}
-            </div>
-            
-            {/* Admin Button */}
-            <Link
-              to="/admin/login"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-[#0A0A0A] hover:bg-gray-200 transition-colors"
+          {/* Follow Us Button */}
+          <div className="hidden lg:flex items-center">
+            <Button
+              onClick={() => setIsFollowModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#004AAD] text-white hover:bg-[#003A8C] transition-colors"
             >
-              <Shield className="w-4 h-4" />
-              <span>Admin</span>
-            </Link>
+              <Users className="w-4 h-4" />
+              <span>Follow Us</span>
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -149,41 +141,87 @@ export function Header() {
               );
             })}
             
-            {/* Social Media Links Mobile */}
-            <div className="px-4 py-3 border-t border-gray-200">
-              <p className="text-sm text-[#0A0A0A]/60 mb-2">Follow Us</p>
-              <div className="flex items-center gap-3">
-                {socialLinks.map((social) => {
-                  const Icon = social.icon;
-                  return (
-                    <a
-                      key={social.name}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`p-2 rounded-full bg-gray-100 text-[#0A0A0A]/60 transition-colors ${social.color}`}
-                      aria-label={social.name}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-            
-            {/* Admin Button Mobile */}
-            <Link
-              to="/admin/login"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-100 text-[#0A0A0A] hover:bg-gray-200 transition-colors"
+            {/* Follow Us Button Mobile */}
+            <Button
+              onClick={() => {
+                setIsMenuOpen(false);
+                setIsFollowModalOpen(true);
+              }}
+              className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[#004AAD] text-white hover:bg-[#003A8C] transition-colors w-full"
             >
-              <Shield className="w-5 h-5" />
-              <span>Admin</span>
-            </Link>
+              <Users className="w-5 h-5" />
+              <span>Follow Us</span>
+            </Button>
           </nav>
         )}
       </div>
+
+      {/* Follow Us Modal */}
+      {isFollowModalOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-hidden"
+          onClick={() => setIsFollowModalOpen(false)}
+        >
+          <div 
+            className="bg-white rounded-lg max-w-md w-full p-6 relative shadow-2xl animate-in fade-in zoom-in duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsFollowModalOpen(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5 text-[#0A0A0A]/60" />
+            </button>
+
+            {/* Modal Content */}
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-[#004AAD]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-[#004AAD]" />
+              </div>
+              <h2 className="text-2xl font-bold text-[#0A0A0A] mb-2">Follow Us</h2>
+              <p className="text-[#0A0A0A]/60">Stay connected with us on social media for the latest updates!</p>
+            </div>
+
+            {/* Social Links */}
+            <div className="space-y-3">
+              {socialLinks.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.name}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsFollowModalOpen(false)}
+                    className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 hover:border-[#004AAD] hover:bg-[#004AAD]/5 transition-all group"
+                  >
+                    <div className={`p-3 rounded-full bg-gray-100 group-hover:bg-white transition-colors`}>
+                      <Icon className={`w-6 h-6 text-[#0A0A0A]/60 transition-colors ${social.color}`} />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <h3 className="font-semibold text-[#0A0A0A]">{social.name}</h3>
+                      <p className="text-sm text-[#0A0A0A]/60">Follow us on {social.name}</p>
+                    </div>
+                    <svg className="w-5 h-5 text-[#0A0A0A]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                );
+              })}
+            </div>
+
+            {/* Close Button */}
+            <Button
+              onClick={() => setIsFollowModalOpen(false)}
+              variant="outline"
+              className="w-full mt-6"
+            >
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
